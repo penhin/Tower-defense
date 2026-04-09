@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: b8f5648fd0486c04b9923582593e924f
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - destinationPrefab: {fileID: 5231993372380819282, guid: 120d7a6ddf5b57d45b364afb69806b5a, type: 3}
+  - emptyPrefab: {fileID: 4138740773823311996, guid: 59338dd790c1eff44b67fc8411f0d961, type: 3}
+  - wallPrefab: {fileID: 2573626846747648789, guid: 70b37651b757c854996a8726f5047ce7, type: 3}
+  - towerPrefab: {instanceID: 0}
+  - spawnPointPrefab: {fileID: 5231993372380819282, guid: 8a5898c050ca18749beaab796a5a2cd5, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -17,8 +17,7 @@ public class GameBoard : MonoBehaviour
     {
         get => showPahts;
         set
-        {
-            showPahts = value;
+        { showPahts = value;
             if (showPahts)
             {
                 foreach (GameTile tile in tiles)
@@ -50,6 +49,8 @@ public class GameBoard : MonoBehaviour
     private Vector2Int size;
 
     private Queue<GameTile> searchFrontier = new Queue<GameTile>();
+
+    private List<GameTileContent> updatingContent = new List<GameTileContent>();
     
     public bool ShowGrid
     {
@@ -72,7 +73,7 @@ public class GameBoard : MonoBehaviour
 
     public GameTile GetTile(Ray ray)
     {
-        if (Physics.Raycast(ray, out RaycastHit hit))
+        if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, 1))
         {
             int x = (int)(hit.point.x + size.x * 0.5f);
             int y = (int)(hit.point.z + size.y * 0.5f);
@@ -82,6 +83,14 @@ public class GameBoard : MonoBehaviour
             }
         }
         return null;
+    }
+    
+    public void GameUpdate()
+    {
+        for(int i = 0; i < updatingContent.Count; i++)
+        {
+            updatingContent[i].GameUpdate();
+        }
     }
 
     public void Initialize(Vector2Int size, GameTileContentFactory contentFactory)
@@ -156,7 +165,36 @@ public class GameBoard : MonoBehaviour
                 tile.Content = contentFactory.Get(GameTileContentType.Empty);
                 FindPaths();
             }
+
+        }
+    }
+    
+    public void ToggleTower(GameTile tile)
+    {
+        if (tile.Content.Type == GameTileContentType.Tower)
+        {
+            updatingContent.Remove(tile.Content);
+            tile.Content = contentFactory.Get(GameTileContentType.Empty);
+            FindPaths();
+        }
+        else if (tile.Content.Type == GameTileContentType.Empty)
+        {
+            tile.Content = contentFactory.Get(GameTileContentType.Tower);
+            if (FindPaths())
+            {
+                updatingContent.Add(tile.Content);
+            }
+            else
+            {
+                tile.Content = contentFactory.Get(GameTileContentType.Empty);
+                FindPaths();
+            }
             
+        }
+        else if (tile.Content.Type == GameTileContentType.Wall)
+        {
+            tile.Content = contentFactory.Get(GameTileContentType.Tower);
+            updatingContent.Add(tile.Content);
         }
     }
     
@@ -218,7 +256,7 @@ public class GameBoard : MonoBehaviour
 
         foreach (GameTile tile in tiles)
         {
-            if (tile.Content.Type == GameTileContentType.Wall)
+            if (tile.Content.BlocksPath)
             {
                 continue;
             }

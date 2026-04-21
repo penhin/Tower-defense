@@ -103,7 +103,7 @@ public class GameTile : MonoBehaviour
     private GameTile GrowPathTo(GameTile neighbor, Direction direction)
     {
         Debug.Assert(HasPath, "No path!");
-        if (!HasPath || neighbor == null || neighbor.Content.Type == GameTileContentType.Wall || neighbor.HasPath)
+        if (!HasPath || neighbor == null || neighbor.Content.BlocksPath || neighbor.HasPath)
         {
             return null;
         }

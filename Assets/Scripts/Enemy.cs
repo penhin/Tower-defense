@@ -7,10 +7,10 @@ using UnityEngine.Tilemaps;
 
 public class Enemy : MonoBehaviour
 {
+    public float Scale { get; private set; }
 
     [SerializeField]
     private Transform model = default;
-
     private GameTile tileFrom, tileTo;
     private Vector3 positionFrom, positionTo;
     private DirectionChange directionChange;
@@ -18,6 +18,7 @@ public class Enemy : MonoBehaviour
     private Direction direction;
     private float pathOffset;
     private float speed;
+    private float Health { get; set; }
     private float progress, progressFactor;
     private float directionAngleFrom, directionAngleTo;
 
@@ -112,15 +113,30 @@ public class Enemy : MonoBehaviour
         progressFactor =
             speed / (Mathf.PI * Mathf.Max(Mathf.Abs(pathOffset), 0.2f));
     }
-    
-    public void Initialize (float scale, float speed, float pathOffset) {
-		model.localScale = new Vector3(scale, scale, scale);
+
+    public void Initialize(float scale, float speed, float pathOffset)
+    {
+        model.localScale = new Vector3(scale, scale, scale);
+        Scale = scale;
         this.speed = speed;
         this.pathOffset = pathOffset;
-	}
+        Health = 100f * scale;
+    }
+    
+    public void ApplyDamage(float damage)
+    {
+        Debug.Assert(damage >= 0f, "Negative damage applied");
+        Health -= damage;
+    }
 
     public bool GameUpdate()
     {
+        if (Health <= 0f)
+        {
+            OriginFactory.Reclaim(this);
+            return false;
+        }
+
         progress += Time.deltaTime * progressFactor;
         while (progress >= 1f)
         {
